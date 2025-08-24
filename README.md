@@ -1,1 +1,1 @@
-# gan-prj
+# GAN Project
