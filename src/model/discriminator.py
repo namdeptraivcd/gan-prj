@@ -1,4 +1,6 @@
 from torch import nn
+
+
 class Discriminator(nn.Module):
     def __init__(self, embed_dim):
         super().__init__()

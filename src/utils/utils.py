@@ -1,10 +1,11 @@
+import numpy as np
 import pandas as pd
 import torch
-from transformers import AutoTokenizer, AutoModel, AutoModelForCausalLM
+from transformers import (AutoTokenizer, AutoModel, AutoModelForCausalLM, 
+                          BertTokenizer, BertModel)
 
-# ======================
-# 1. Đọc file Excel và tạo embedding từ GPT2 Chinese
-# ======================
+
+# Đọc file Excel và tạo embedding từ GPT2 Chinese
 def read_excel(file_path, sheet_name=0, column_name="Utterance"):
     tokenizer = AutoTokenizer.from_pretrained("uer/gpt2-chinese-cluecorpussmall")
     model = AutoModel.from_pretrained("uer/gpt2-chinese-cluecorpussmall")  # <-- dùng AutoModel để lấy hidden states
@@ -23,9 +24,7 @@ def read_excel(file_path, sheet_name=0, column_name="Utterance"):
     return embeddings
 
 
-# ======================
-# 2. Generate văn bản từ embeddings (trick: convert embedding -> text seed)
-# ======================
+# Generate văn bản từ embeddings (trick: convert embedding -> text seed)
 def embeddings_to_text(embeddings, max_length=50):
     tokenizer = AutoTokenizer.from_pretrained("uer/gpt2-chinese-cluecorpussmall")
     model = AutoModelForCausalLM.from_pretrained("uer/gpt2-chinese-cluecorpussmall")
@@ -47,12 +46,28 @@ def embeddings_to_text(embeddings, max_length=50):
     return texts
 
 
-if __name__ == "__main__":
-    print(">>> Đọc dữ liệu và sinh embeddings...")
-    embeddings = read_excel("src/data/Chinese.xlsx", sheet_name=0, column_name="Utterance")
-    print("Embedding shape:", len(embeddings), "câu")
+def prepare_embeddings(path, column_name="Utterance"):
+    texts = read_excel(path, column_name=column_name)
 
-    print(">>> Sinh văn bản từ GPT-2 Chinese...")
-    fake_texts = embeddings_to_text(embeddings)
-    for t in fake_texts:
-        print(">>>", t)
+    # Nếu read_excel trả về list[str], cần encode bằng BERT
+    if isinstance(texts[0], str):
+        print("Dữ liệu là text, tạo embedding bằng BERT...")
+        tokenizer = BertTokenizer.from_pretrained("bert-base-uncased")
+        model = BertModel.from_pretrained("bert-base-uncased")
+        model.eval()
+
+        embeddings = []
+        for t in texts:
+            inputs = tokenizer(t, return_tensors="pt", truncation=True, padding=True)
+            with torch.no_grad():
+                outputs = model(**inputs)
+                emb = outputs.last_hidden_state.mean(dim=1)  # mean pooling
+            embeddings.append(emb.squeeze(0).numpy())
+
+        embeddings = np.array(embeddings, dtype=np.float32)
+
+    else:
+        # Nếu đã là số thì ép sang numpy float32
+        embeddings = np.array(texts, dtype=np.float32)
+
+    return torch.tensor(embeddings)

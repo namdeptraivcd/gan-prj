@@ -1,20 +1,26 @@
 import torch
-from src.model import gan as model
+from src.model.gan import GAN
+from src.utils.utils import embeddings_to_text
 
+
+def main():
+    # Đọc dữ liệu và tạo embedding
+    real_embeddings = model.prepare_embeddings("src/data/Chinese.xlsx", column_name="Utterance")
+
+    model = GAN(real_embeddings=real_embeddings)
+    
+    # Train GAN
+    model.fit()
+
+    # Sinh embedding giả
+    noise = torch.randn(5, 100)
+    fake_embeddings = model.G(noise)
+
+    # Convert embedding giả sang văn bản
+    fake_texts = embeddings_to_text(fake_embeddings)
+    for t in fake_texts:
+        print(t)
 
 
 if __name__ == "__main__":
-    print(">>> Đọc dữ liệu và tạo embedding...")
-    real_embeddings = model.prepare_embeddings("src/data/Chinese.xlsx", column_name="Utterance")
-
-    print(">>> Train GAN...")
-    G = model.train_gan(real_embeddings)
-
-    print(">>> Sinh embedding giả...")
-    noise = torch.randn(5, 100)
-    fake_embeddings = G(noise)
-
-    print(">>> Convert embedding giả sang văn bản...")
-    fake_texts = model.embeddings_to_text(fake_embeddings)
-    for t in fake_texts:
-        print(">>>", t)
+    main()
