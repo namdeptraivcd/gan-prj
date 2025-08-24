@@ -11,7 +11,7 @@ def read_excel(file_path, sheet_name=0, column_name="Utterance"):
     model = AutoModel.from_pretrained("uer/gpt2-chinese-cluecorpussmall")  # <-- dùng AutoModel để lấy hidden states
     model.eval()
 
-    df = pd.read_excel(file_path, sheet_name=sheet_name, nrows=100)  # đọc 10000 dòng
+    df = pd.read_excel(file_path, sheet_name=sheet_name, nrows=1000)  # đọc 10000 dòng
     sentences = df[column_name].dropna().tolist()
 
     embeddings = []
@@ -32,7 +32,7 @@ def embeddings_to_text(embeddings, max_length=50):
 
     texts = []
     for _ in embeddings[:5]:  # chỉ generate 5 câu thử
-        input_ids = tokenizer.encode("今天天气", return_tensors="pt")  # seed Chinese
+        input_ids = tokenizer.encode("吃晚饭", return_tensors="pt")  # seed Chinese
         outputs = model.generate(
             input_ids,
             max_length=max_length,

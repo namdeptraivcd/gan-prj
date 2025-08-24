@@ -1,11 +1,10 @@
 import torch
 from src.model.gan import GAN
-from src.utils.utils import embeddings_to_text
-
+from src.utils.utils import embeddings_to_text, prepare_embeddings
 
 def main():
     # Đọc dữ liệu và tạo embedding
-    real_embeddings = model.prepare_embeddings("src/data/Chinese.xlsx", column_name="Utterance")
+    real_embeddings = prepare_embeddings("src/data/Chinese.xlsx", column_name="Utterance")
 
     model = GAN(real_embeddings=real_embeddings)
     
