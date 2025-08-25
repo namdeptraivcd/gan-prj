@@ -6,6 +6,7 @@ class GloalConfig:
     NUM_MAX_EPOCHS = 10
         
 
+'''NLP models' configs'''
 class GANConfig:
     lr = 0.0002
     noise_dim = 100
@@ -15,13 +16,11 @@ class VAEConfig:
     pass
     
 
+'''CV models' configs'''
 class DiffusionConfig:
-    # Training
     batch_size = 4
     lr = 1e-4
     image_size = 64
-
-    # Diffusion
     timesteps = 300
 
     # Dataset

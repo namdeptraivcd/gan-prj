@@ -1,1 +1,1 @@
-# Generative Models Project
+# Federated Generative Models Project
