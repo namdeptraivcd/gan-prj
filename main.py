@@ -3,17 +3,17 @@ import argparse
 
 from src.config.config import DiffusionConfig
 
-from src.model.gan.networks.gan import GAN
-from src.model.gan.train.trainer import GANTrainer
-from src.model.gan.utils.utils import embeddings_to_text, prepare_embeddings
+from src.model.base.nlp.gan.networks.gan import GAN
+from src.model.base.nlp.gan.train.trainer import GANTrainer
+from src.model.base.nlp.gan.utils.utils import embeddings_to_text, prepare_embeddings
 
-from src.model.vae.networks.vae import VAE
+from src.model.base.nlp.vae.networks.vae import VAE
 
-from src.model.diffusion.networks.diffusion import Diffusion
-from src.model.diffusion.train.trainer import DiffusionTrainer
-from src.model.diffusion.networks.diffusion import Diffusion
-from src.model.diffusion.networks.unet import UNet
-from src.model.diffusion.networks.text_encoder import TextEncoder
+from src.model.base.cv.diffusion.networks.diffusion import Diffusion
+from src.model.base.cv.diffusion.train.trainer import DiffusionTrainer
+from src.model.base.cv.diffusion.networks.diffusion import Diffusion
+from src.model.base.cv.diffusion.networks.unet import UNet
+from src.model.base.cv.diffusion.networks.text_encoder import TextEncoder
 
 
 def main():
@@ -21,7 +21,7 @@ def main():
 
     if model_type == "GAN":
         # Đọc dữ liệu và tạo embedding
-        real_embeddings = prepare_embeddings("data/Chinese.xlsx", column_name="Utterance")
+        real_embeddings = prepare_embeddings("data/nlp/Chinese.xlsx", column_name="Utterance")
 
         # Tạo model (GAN/VAE)
         model = GAN(real_embeddings=real_embeddings)
@@ -58,10 +58,10 @@ def main():
             trainer.fit()
         elif args.sample:
             trainer = DiffusionTrainer(diffusion)
-            trainer.load_checkpoint("data/checkpoints/best_model.pt")  # Load best model
+            trainer.load_checkpoint("data/cv/checkpoints/best_model.pt")  # Load best model
             img = diffusion.sample(args.prompt)
-            img.save("data/generated.png")
-            print("Image saved to data/generated.png")
+            img.save("data/cv/generated.png")
+            print("Image saved to data/cv/generated.png")
     else:
         raise NotImplementedError("Model not be supported")
         

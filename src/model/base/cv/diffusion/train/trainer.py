@@ -3,7 +3,7 @@ import torch
 from torch.utils.data import DataLoader
 from torch.optim import Adam
 from tqdm import tqdm
-from src.model.diffusion.utils.dataset import TextImageDataset
+from src.model.base.cv.diffusion.utils.dataset import TextImageDataset
 from src.config.config import GloalConfig, DiffusionConfig
 
 
@@ -18,7 +18,7 @@ class DiffusionTrainer:
         self.optim = Adam(diffusion.unet.parameters(), lr=DiffusionConfig.lr)
         
         # Create folder checkpoints
-        os.makedirs("data/checkpoints", exist_ok=True)
+        os.makedirs("data/cv/checkpoints", exist_ok=True)
         self.best_loss = float("inf")
     
     def train_minibatch(self, imgs, captions):
@@ -83,9 +83,9 @@ class DiffusionTrainer:
             "text_encoder": self.diffusion.text_encoder.state_dict(),
             "optimizer": self.optim.state_dict(),
         }
-        torch.save(checkpoint, "data/checkpoints/best_model.pt")
+        torch.save(checkpoint, "data/cv/checkpoints/best_model.pt")
 
-    def load_checkpoint(self, path="data/checkpoints/best_model.pt"):
+    def load_checkpoint(self, path="data/cv/checkpoints/best_model.pt"):
         """Load saved model"""
         checkpoint = torch.load(path, map_location=self.device)
         self.diffusion.unet.load_state_dict(checkpoint["unet"])

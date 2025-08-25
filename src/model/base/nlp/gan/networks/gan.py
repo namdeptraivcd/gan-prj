@@ -1,6 +1,6 @@
 import torch.nn as nn
-from src.model.gan.networks.generator import Generator
-from src.model.gan.networks.discriminator import Discriminator
+from src.model.base.nlp.gan.networks.generator import Generator
+from src.model.base.nlp.gan.networks.discriminator import Discriminator
 from src.config.config import GloalConfig, GANConfig
 
 
