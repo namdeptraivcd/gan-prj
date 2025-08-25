@@ -206,3 +206,9 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+fix_bug.py
+fix_bug.txt
+
+.vscode/
+data/checkpoints/best_model.pt
