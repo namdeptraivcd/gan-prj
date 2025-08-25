@@ -1,1 +1,1 @@
-# GAN Project
+# Generative Models Project
