@@ -1,8 +1,8 @@
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from src.model.generator import Generator
-from src.model.discriminator import Discriminator
+from src.model.gan.networks.generator import Generator
+from src.model.gan.networks.discriminator import Discriminator
 from src.config.config import Config
 config = Config()
 
@@ -25,7 +25,7 @@ class GAN:
         self.optimizer_G = optim.Adam(self.G.parameters(), lr=lr)
         self.optimizer_D = optim.Adam(self.D.parameters(), lr=lr)
     
-    def train_epoch(self, real_embeddings, G, D, noise_dim, device, criterion, optimizer_D, optimizer_G, epoch, epochs):
+    def train_epoch(self, real_embeddings, G, D, noise_dim, device, criterion, optimizer_D, optimizer_G, epoch, epochs): #TODO: k steps training D, 1 step training G
         # Train Discriminator 
         z = torch.randn(real_embeddings.size(0), noise_dim).to(device)
         fake_embeddings = G(z).detach()
@@ -44,11 +44,11 @@ class GAN:
         optimizer_D.step()
 
         # Train Generator 
-        z = torch.randn(real_embeddings.size(0), noise_dim).to(device)
+        z = torch.randn(real_embeddings.size(0), noise_dim).to(device) 
         fake_embeddings = G(z)
         outputs = D(fake_embeddings)
 
-        g_loss = criterion(outputs, real_labels)
+        g_loss = criterion(outputs, real_labels) #TODO hiểu kĩ hơn về backward trong trường hợp này, và code phương pháp backward trong báo
 
         optimizer_G.zero_grad()
         g_loss.backward()

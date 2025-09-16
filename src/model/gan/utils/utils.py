@@ -11,7 +11,7 @@ def read_excel(file_path, sheet_name=0, column_name="Utterance"):
     model = AutoModel.from_pretrained("uer/gpt2-chinese-cluecorpussmall")  # <-- dùng AutoModel để lấy hidden states
     model.eval()
 
-    df = pd.read_excel(file_path, sheet_name=sheet_name, nrows=1000)  # đọc 10000 dòng
+    df = pd.read_excel(file_path, sheet_name=sheet_name, nrows=10)  # đọc 10000 dòng
     sentences = df[column_name].dropna().tolist()
 
     embeddings = []
